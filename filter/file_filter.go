@@ -1,7 +1,6 @@
 package filter
 
 import (
-	"fmt"
 	"mime"
 	"net/http"
 	"os"
@@ -38,7 +37,6 @@ func (f *FileFilter) FilterRequest(req *Request) (res *http.Response) {
 		Error("file_filter requires a BasePath")
 		return SimpleResponse(req.HttpRequest, 500, nil, "Server Error\n")
 	}
-	fmt.Println("DEBUG", asset_path)
 	// Open File
 	if file, err := os.Open(asset_path); err == nil {
 		// Make sure it's an actual file
