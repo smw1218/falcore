@@ -1,4 +1,4 @@
-package falcore
+package buffer
 
 import (
 	/*	"io"*/
@@ -7,12 +7,12 @@ import (
 )
 
 func TestBufferPool(t *testing.T) {
-	pool := newBufferPool(10, 1024)
+	pool := NewPool(10, 1024)
 
 	text := []byte("Hello World")
 
 	// get one
-	bpe := pool.take(bytes.NewBuffer(text))
+	bpe := pool.Take(bytes.NewBuffer(text))
 	// read all
 	out := make([]byte, 1024)
 	l, _ := bpe.br.Read(out)
@@ -22,10 +22,10 @@ func TestBufferPool(t *testing.T) {
 	if l != len(text) {
 		t.Errorf("Expected length %v got %v", len(text), l)
 	}
-	pool.give(bpe)
+	pool.Give(bpe)
 
 	// get one
-	bpe = pool.take(bytes.NewBuffer(text))
+	bpe = pool.Take(bytes.NewBuffer(text))
 	// read all
 	out = make([]byte, 1024)
 	l, _ = bpe.br.Read(out)
@@ -35,17 +35,17 @@ func TestBufferPool(t *testing.T) {
 	if l != len(text) {
 		t.Errorf("Expected length %v got %v", len(text), l)
 	}
-	pool.give(bpe)
+	pool.Give(bpe)
 
 	// get one
-	bpe = pool.take(bytes.NewBuffer(text))
+	bpe = pool.Take(bytes.NewBuffer(text))
 	// read 1 byte
 	out = make([]byte, 1)
 	bpe.br.Read(out)
-	pool.give(bpe)
+	pool.Give(bpe)
 
 	// get one
-	bpe = pool.take(bytes.NewBuffer(text))
+	bpe = pool.Take(bytes.NewBuffer(text))
 	// read all
 	out = make([]byte, 1024)
 	l, _ = bpe.br.Read(out)
@@ -55,6 +55,6 @@ func TestBufferPool(t *testing.T) {
 	if l != len(text) {
 		t.Errorf("Expected length %v got %v", len(text), l)
 	}
-	pool.give(bpe)
+	pool.Give(bpe)
 
 }

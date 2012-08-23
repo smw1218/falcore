@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var srv *falcore.Server
+// var srv *falcore.Server
 
 func init() {
 	// Silence log output
@@ -25,7 +25,7 @@ func init() {
 	mime.AddExtensionType(".txt", "text/plain")
 	mime.AddExtensionType(".png", "image/png")
 
-	go func() {
+	/*	go func() {
 
 		// falcore setup
 		pipeline := falcore.NewPipeline()
@@ -37,15 +37,15 @@ func init() {
 		if err := srv.ListenAndServe(); err != nil {
 			panic(fmt.Sprintf("Could not start falcore: %v", err))
 		}
-	}()
+	}()*/
 }
 
-func port() int {
+/*func port() int {
 	for srv.Port() == 0 {
 		time.Sleep(1e7)
 	}
 	return srv.Port()
-}
+}*/
 
 func get(p string) (r *http.Response, err error) {
 	req, _ := http.NewRequest("GET", fmt.Sprintf("http://%v", fmt.Sprintf("localhost:%v/", port())), nil)

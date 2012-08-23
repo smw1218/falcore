@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+/*
 var srv *falcore.Server
 
 func init() {
@@ -47,7 +48,7 @@ func port() int {
 		time.Sleep(1e7)
 	}
 	return srv.Port()
-}
+}*/
 
 var serverData = []struct {
 	path     string

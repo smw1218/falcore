@@ -25,6 +25,9 @@ var logger Logger = NewStdLibLogger()
 func SetLogger(newLogger Logger) {
 	logger = newLogger
 }
+func GetLogger() Logger {
+	return logger
+}
 
 // Helper for calculating times
 func TimeDiff(startTime time.Time, endTime time.Time) float32 {
