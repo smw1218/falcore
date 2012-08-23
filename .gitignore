@@ -2,6 +2,7 @@
 _*
 6.out
 *.swp
+*.swo
 tags
 bin
 examples/hot_restart/hot_restart

@@ -1,7 +1,6 @@
-package upstream
+package filter
 
 import (
-	"github.com/ngmoco/falcore"
 	"net/http"
 	"strconv"
 	"strings"

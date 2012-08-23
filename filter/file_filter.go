@@ -1,7 +1,6 @@
-package static_file
+package filter
 
 import (
-	"github.com/ngmoco/falcore"
 	"mime"
 	"net/http"
 	"os"

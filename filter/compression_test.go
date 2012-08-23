@@ -1,4 +1,4 @@
-package compression
+package filter
 
 import (
 	"bufio"
@@ -6,7 +6,6 @@ import (
 	"compress/flate"
 	"compress/gzip"
 	"fmt"
-	"github.com/ngmoco/falcore"
 	"io"
 	"io/ioutil"
 	"net"

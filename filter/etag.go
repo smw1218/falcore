@@ -1,7 +1,6 @@
-package etag
+package filter
 
 import (
-	"github.com/ngmoco/falcore"
 	"net/http"
 )
 

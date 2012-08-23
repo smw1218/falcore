@@ -1,9 +1,8 @@
-package static_file
+package filter
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/ngmoco/falcore"
 	"io"
 	"io/ioutil"
 	"log"

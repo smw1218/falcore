@@ -1,10 +1,9 @@
-package compression
+package filter
 
 import (
 	"bytes"
 	"compress/flate"
 	"compress/gzip"
-	"github.com/ngmoco/falcore"
 	"io"
 	"net/http"
 	"strings"
@@ -27,7 +26,7 @@ func NewFilter(types []string) *Filter {
 }
 
 func (c *Filter) FilterResponse(request *falcore.Request, res *http.Response) {
-	req := request.HttpRequest
+	ggreq := request.HttpRequest
 	if accept := req.Header.Get("Accept-Encoding"); accept != "" {
 
 		// Is content an acceptable type for encoding?

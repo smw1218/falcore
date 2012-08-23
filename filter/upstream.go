@@ -1,8 +1,7 @@
-package upstream
+package filter
 
 import (
 	"fmt"
-	"github.com/ngmoco/falcore"
 	"net"
 	"net/http"
 	"time"

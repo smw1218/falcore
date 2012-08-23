@@ -1,10 +1,9 @@
-package etag
+package filter
 
 import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/ngmoco/falcore"
 	"io"
 	"net"
 	"net/http"
