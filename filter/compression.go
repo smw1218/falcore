@@ -67,7 +67,7 @@ func (c *CompressionFilter) FilterResponse(request *Request, res *http.Response)
 		case "deflate":
 			comp, err := flate.NewWriter(buf, -1)
 			if err != nil {
-				log.Error("Compression Error: %v", err)
+				Error("Compression Error: %v", err)
 				request.CurrentStage.Status = 1 // Skip
 				return
 			}

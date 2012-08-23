@@ -26,7 +26,7 @@ func (f *FileFilter) FilterRequest(req *Request) (res *http.Response) {
 	if strings.HasPrefix(asset_path, f.PathPrefix) {
 		asset_path = asset_path[len(f.PathPrefix):]
 	} else {
-		log.Debug("%v doesn't match prefix %v", asset_path, f.PathPrefix)
+		Debug("%v doesn't match prefix %v", asset_path, f.PathPrefix)
 		res = SimpleResponse(req.HttpRequest, 404, nil, "Not found.")
 		return
 	}
@@ -35,10 +35,10 @@ func (f *FileFilter) FilterRequest(req *Request) (res *http.Response) {
 	if f.BasePath != "" {
 		asset_path = filepath.Join(f.BasePath, asset_path)
 	} else {
-		log.Error("file_filter requires a BasePath")
+		Error("file_filter requires a BasePath")
 		return SimpleResponse(req.HttpRequest, 500, nil, "Server Error\n")
 	}
-
+	fmt.Println("DEBUG", asset_path)
 	// Open File
 	if file, err := os.Open(asset_path); err == nil {
 		// Make sure it's an actual file
@@ -60,8 +60,7 @@ func (f *FileFilter) FilterRequest(req *Request) (res *http.Response) {
 			file.Close()
 		}
 	} else {
-		fmt.Println("DEBUG - logger: %v", log)
-		log.Finest("Can't open %v: %v", asset_path, err)
+		Finest("Can't open %v: %v", asset_path, err)
 	}
 	return
 }

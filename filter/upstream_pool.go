@@ -55,7 +55,7 @@ func NewUpstreamPool(name string, config []UpstreamEntryConfig) *UpstreamPool {
 			upstreamPort, err = strconv.Atoi(parts[1])
 			if err != nil {
 				upstreamPort = 80
-				log.Error("UpstreamPool Error converting port to int for", upstreamHost, ":", err)
+				Error("UpstreamPool Error converting port to int for", upstreamHost, ":", err)
 			}
 		}
 		ups := NewUpstream(upstreamHost, upstreamPort, uec.ForceHttp)
@@ -77,7 +77,7 @@ func (up UpstreamPool) Next() *UpstreamEntry {
 
 func (up UpstreamPool) LogStatus() {
 	weightsBuffer := make([]int, len(up.pool))
-	// loop and save the weights so we don't lock for logging
+	// loop and save the weights so we don't lock for ing
 	up.weightMutex.RLock()
 	for i, ue := range up.pool {
 		weightsBuffer[i] = ue.Weight
@@ -85,7 +85,7 @@ func (up UpstreamPool) LogStatus() {
 	up.weightMutex.RUnlock()
 	// Now do the logging
 	for i, ue := range up.pool {
-		log.Info("Upstream %v: %v:%v\t%v", up.Name, ue.Upstream.Host, ue.Upstream.Port, weightsBuffer[i])
+		Info("Upstream %v: %v:%v\t%v", up.Name, ue.Upstream.Host, ue.Upstream.Port, weightsBuffer[i])
 	}
 }
 
@@ -158,7 +158,7 @@ func (up UpstreamPool) pingUpstreams() {
 			}
 		}
 	}
-	log.Warn("Stopping ping for %v", up.Name)
+	Warn("Stopping ping for %v", up.Name)
 }
 
 func (up UpstreamPool) pingUpstream(ups *UpstreamEntry, index int) {

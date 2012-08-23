@@ -4,57 +4,6 @@ import (
 	"net/http"
 )
 
-// share common logger interface with core falcore
-type Logger interface {
-	// Matches the log4go interface
-	Finest(arg0 interface{}, args ...interface{})
-	Fine(arg0 interface{}, args ...interface{})
-	Debug(arg0 interface{}, args ...interface{})
-	Trace(arg0 interface{}, args ...interface{})
-	Info(arg0 interface{}, args ...interface{})
-	Warn(arg0 interface{}, args ...interface{}) error
-	Error(arg0 interface{}, args ...interface{}) error
-	Critical(arg0 interface{}, args ...interface{}) error
-}
-
-func Finest(arg0 interface{}, args ...interface{}) {
-	log.Finest(arg0, args...)
-}
-
-func Fine(arg0 interface{}, args ...interface{}) {
-	log.Fine(arg0, args...)
-}
-
-func Debug(arg0 interface{}, args ...interface{}) {
-	log.Debug(arg0, args...)
-}
-
-func Trace(arg0 interface{}, args ...interface{}) {
-	log.Trace(arg0, args...)
-}
-
-func Info(arg0 interface{}, args ...interface{}) {
-	log.Info(arg0, args...)
-}
-
-func Warn(arg0 interface{}, args ...interface{}) error {
-	return log.Warn(arg0, args...)
-}
-
-func Error(arg0 interface{}, args ...interface{}) error {
-	return log.Error(arg0, args...)
-}
-
-func Critical(arg0 interface{}, args ...interface{}) error {
-	return log.Critical(arg0, args...)
-}
-
-var log Logger
-
-func SetLogger(newLog Logger) {
-	log = newLog
-}
-
 // Filter incomming requests and optionally return a response or nil.  
 // Filters are chained together into a flow (the Pipeline) which will terminate
 // if the Filter returns a response.  

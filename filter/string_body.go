@@ -32,7 +32,7 @@ func (sbf *StringBodyFilter) FilterRequest(request *Request) *http.Response {
 		sb, err := sbf.readRequestBody(req)
 		if sb == nil || err != nil {
 			request.CurrentStage.Status = 3 // Skip
-			log.Debug("%s No Req Body or Ignored: %v", request.ID, err)
+			Debug("%s No Req Body or Ignored: %v", request.ID, err)
 		}
 	} else {
 		request.CurrentStage.Status = 1 // Skip

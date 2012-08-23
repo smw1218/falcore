@@ -1,54 +1,16 @@
 package filter
 
 import (
-	"bufio"
 	"bytes"
 	"compress/flate"
 	"compress/gzip"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net"
 	"net/http"
-	"path"
+	"strings"
 	"testing"
-	"time"
 )
-
-/*
-var srv *falcore.Server
-
-func init() {
-	go func() {
-		// falcore setup
-		pipeline := falcore.NewPipeline()
-		pipeline.Upstream.PushBack(falcore.NewRequestFilter(func(req *falcore.Request) *http.Response {
-			for _, data := range serverData {
-				if data.path == req.HttpRequest.URL.Path {
-					header := make(http.Header)
-					header.Set("Content-Type", data.mime)
-					header.Set("Content-Encoding", data.encoding)
-					return falcore.SimpleResponse(req.HttpRequest, 200, header, string(data.body))
-				}
-			}
-			return falcore.SimpleResponse(req.HttpRequest, 404, nil, "Not Found")
-		}))
-
-		pipeline.Downstream.PushBack(NewFilter(nil))
-
-		srv = falcore.NewServer(0, pipeline)
-		if err := srv.ListenAndServe(); err != nil {
-			panic("Could not start falcore")
-		}
-	}()
-}
-
-func port() int {
-	for srv.Port() == 0 {
-		time.Sleep(1e7)
-	}
-	return srv.Port()
-}*/
 
 var serverData = []struct {
 	path     string
@@ -161,33 +123,47 @@ func readfile(path string) []byte {
 	return nil
 }
 
-func get(p string, accept string) (r *http.Response, err error) {
-	var conn net.Conn
-	if conn, err = net.Dial("tcp", fmt.Sprintf("localhost:%v", port())); err == nil {
-		req, _ := http.NewRequest("GET", fmt.Sprintf("http://%v", path.Join(fmt.Sprintf("localhost:%v/", port()), p)), nil)
-		req.Header.Set("Accept-Encoding", accept)
-		req.Write(conn)
-		buf := bufio.NewReader(conn)
-		r, err = http.ReadResponse(buf, req)
+func getCompressionResponse(t *testing.T, path string, accept string) (*Request, *http.Response) {
+	rt := http.NewFileTransport(http.Dir("./"))
+	r, err := http.NewRequest("GET", path, nil)
+	r.Header.Set("Accept-Encoding", accept)
+	req := &Request{
+		HttpRequest:  r,
+		CurrentStage: new(PipelineStageStat),
 	}
-	return
+	if err != nil {
+		t.Errorf("Error creating http.Request: %v", err)
+	}
+	res, err := rt.RoundTrip(r)
+	for _, data := range serverData {
+		if data.path == path {
+
+			res.Header.Set("Content-Type", data.mime)
+			res.Header.Set("Content-Encoding", data.encoding)
+			res.Body = (*fixedResBody)(strings.NewReader(string(data.body)))
+		}
+	}
+	if err != nil {
+		t.Errorf("bad round trip: %v", err)
+	}
+	return req, res
 }
 
-func TestCompressionFilter(t *testing.T) {
-	// select{}
+func TestCompressionFilter2(t *testing.T) {
+	filter := NewCompressionFilter(DefaultTypes)
 	for _, test := range testData {
-		if res, err := get(test.path, test.accept); err == nil {
-			bodyBuf := new(bytes.Buffer)
-			io.Copy(bodyBuf, res.Body)
-			body := bodyBuf.Bytes()
-			if enc := res.Header.Get("Content-Encoding"); enc != test.encoding {
-				t.Errorf("%v Header mismatch. Expecting: %v Got: %v", test.name, test.encoding, enc)
-			}
-			if !bytes.Equal(body, test.encoded_body) {
-				t.Errorf("%v Body mismatch.\n\tExpecting:\n\t%v\n\tGot:\n\t%v", test.name, test.encoded_body, body)
-			}
-		} else {
-			t.Errorf("%v HTTP Error %v", test.name, err)
+		req, res := getCompressionResponse(t, test.path, test.accept)
+
+		filter.FilterResponse(req, res)
+		bodyBuf := new(bytes.Buffer)
+		io.Copy(bodyBuf, res.Body)
+		body := bodyBuf.Bytes()
+
+		if enc := res.Header.Get("Content-Encoding"); enc != test.encoding {
+			t.Errorf("%v Header mismatch. Expecting: %v Got: %v", test.name, test.encoding, enc)
+		}
+		if !bytes.Equal(body, test.encoded_body) {
+			t.Errorf("%v Body mismatch.\n\tExpecting:\n\t%v\n\tGot:\n\t%v", test.name, test.encoded_body, body)
 		}
 	}
 }

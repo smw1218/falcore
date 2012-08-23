@@ -121,11 +121,6 @@ func (fReq *Request) Signature() string {
 	return fmt.Sprintf("%X", fReq.pipelineHash.Sum32())
 }
 
-// Helper for calculating times
-func TimeDiff(startTime time.Time, endTime time.Time) float32 {
-	return float32(endTime.Sub(startTime)) / 1.0e9
-}
-
 // Call from RequestDoneCallback.  Logs a bunch of information about the 
 // request to the falcore logger. This is a pretty big hit to performance 
 // so it should only be used for debugging or development.  The source is a 
@@ -133,14 +128,14 @@ func TimeDiff(startTime time.Time, endTime time.Time) float32 {
 func (fReq *Request) Trace() {
 	reqTime := TimeDiff(fReq.StartTime, fReq.EndTime)
 	req := fReq.HttpRequest
-	log.Trace("%s [%s] %s%s Sig=%s Tot=%.4f", fReq.ID, req.Method, req.Host, req.URL, fReq.Signature(), reqTime)
+	Trace("%s [%s] %s%s Sig=%s Tot=%.4f", fReq.ID, req.Method, req.Host, req.URL, fReq.Signature(), reqTime)
 	l := fReq.PipelineStageStats
 	for e := l.Front(); e != nil; e = e.Next() {
 		pss, _ := e.Value.(*PipelineStageStat)
 		dur := TimeDiff(pss.StartTime, pss.EndTime)
-		log.Trace("%s %-30s S=%d Tot=%.4f %%=%.2f", fReq.ID, pss.Name, pss.Status, dur, dur/reqTime*100.0)
+		Trace("%s %-30s S=%d Tot=%.4f %%=%.2f", fReq.ID, pss.Name, pss.Status, dur, dur/reqTime*100.0)
 	}
-	log.Trace("%s %-30s S=0 Tot=%.4f %%=%.2f", fReq.ID, "Overhead", float32(fReq.Overhead)/1.0e9, float32(fReq.Overhead)/1.0e9/reqTime*100.0)
+	Trace("%s %-30s S=0 Tot=%.4f %%=%.2f", fReq.ID, "Overhead", float32(fReq.Overhead)/1.0e9, float32(fReq.Overhead)/1.0e9/reqTime*100.0)
 }
 
 func (fReq *Request) FinishRequest() {
